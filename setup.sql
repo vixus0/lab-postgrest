@@ -37,3 +37,4 @@ grant select on all tables in schema api to api_anon;
 
 create role authenticator with noinherit nocreatedb nocreaterole nosuperuser login password 'authenticator';
 grant api_anon to authenticator;
+grant api_user to authenticator;

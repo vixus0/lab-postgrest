@@ -10,7 +10,7 @@ import (
 )
 
 type PostgrestClaims struct {
-	Role string `json:"role"`
+	Role     string `json:"role"`
 	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
@@ -21,14 +21,14 @@ func main() {
 	username := flag.String("username", "anonymous", "jwt username")
 
 	flag.Parse()
-	
+
 	claims := PostgrestClaims{
-		Role: *role,
+		Role:     *role,
 		Username: *username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-			Issuer: "test",
-			Audience: jwt.ClaimStrings{"postgrest"},
+			Issuer:    "test",
+			Audience:  jwt.ClaimStrings{"postgrest"},
 		},
 	}
 
@@ -43,5 +43,16 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(ss)
+	token, err = jwt.Parse(ss, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok { // check signing method
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return secretBytes, nil
+	})
+
+	if !token.Valid {
+		panic(err)
+	}
+
+	fmt.Println("Bearer", ss)
 }

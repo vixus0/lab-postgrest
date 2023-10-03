@@ -50,7 +50,9 @@ services:
       PGRST_OPENAPI_SERVER_PROXY_URI: http://api.127-0-0-1.nip.io/
       PGRST_OPENAPI_SECURITY_ACTIVE: "true"
       PGRST_JWT_AUD: postgrest
-      PGRST_JWT_SECRET: "@/opt/secret.txt"
+      PGRST_JWT_SECRET: "@/opt/secret.b64"
+      PGRST_JWT_SECRET_IS_BASE64: "true"
+      PGRST_LOG_LEVEL: info
     labels:
       traefik.enable: "true"
       traefik.http.routers.api.rule: Host(`api.127-0-0-1.nip.io`)
@@ -58,7 +60,7 @@ services:
     expose:
       - "3000"
     volumes:
-      - ./secret.txt:/opt/secret.txt
+      - ./secret.b64:/opt/secret.b64
     depends_on:
       - db
 

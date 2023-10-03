@@ -11,3 +11,7 @@ tasks:
     cmds:
       - go mod tidy
       - go build -o bin/jwt jwt.go
+
+  secret:
+    cmds:
+      - openssl rand -hex 32 | tee secret.txt | base64 > secret.b64
