@@ -8,10 +8,21 @@ tasks:
       - task: build
 
   build:
+    sources:
+      - jwt.go
     cmds:
       - go mod tidy
       - go build -o bin/jwt jwt.go
 
   secret:
+    generates:
+      - secret.txt
+      - secret.b64
     cmds:
       - openssl rand -hex 32 | tee secret.txt | base64 > secret.b64
+
+  dbtest:
+    sources:
+      - setup.sql
+    cmds:
+      - docker run --name dbtest --rm -e POSTGRES_PASSWORD=test -v ./setup.sql:/docker-entrypoint-initdb.d/setup.sql postgres
